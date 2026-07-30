@@ -1,15 +1,11 @@
 from fastapi import FastAPI
+from app.routers import events
+
 
 app = FastAPI()
+app.include_router(events.router)
+
 
 @app.get("/")
-def health():
-    return {"status": "healthy"}
-
-
-@app.get("/hello")
-def health():
-    return {"Message": "Hello Dev",
-            "language" : "Marathi",
-            "framework": "fastapi"
-            }
+def root():
+    return {"status": "Ok"}
