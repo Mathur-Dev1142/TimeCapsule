@@ -3,6 +3,8 @@ from sqlalchemy.orm import Session
 
 from app.db import get_db
 from app.services.wikipedia import save_world_events
+from app.services.india_events import save_india_events
+
 
 router = APIRouter()
 
@@ -10,3 +12,8 @@ router = APIRouter()
 def get_world_events(month: int, day: int, db: Session = Depends(get_db)):
     saved = save_world_events(db,month,day)
     return {"month": month, "day": day, "new_events_saved": saved}
+
+@router.get("/events/india")
+def get_india_events(year: int, db: Session = Depends(get_db)):
+    saved = save_india_events(db , year)
+    return {"year": year, "new_events_saved": saved}
