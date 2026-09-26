@@ -5,9 +5,15 @@ from app.db import get_db
 from app.models import Event, Region
 from app.services.wikipedia import save_world_events
 from app.services.india_events import save_india_events
+from app.services.world_year_events import save_year_events as save_world_year_events
 
 
 router = APIRouter()
+
+@router.get("/events/world/year")
+def get_world_year_events(year: int, db: Session = Depends(get_db)):
+    saved = save_world_year_events(db , year)
+    return {"year": year, "new_events_saved": saved}
 
 @router.get("/events/world")
 def get_world_events(month: int, day: int, db: Session = Depends(get_db)):
@@ -51,6 +57,25 @@ def list_india_events(year:int, db:Session = Depends(get_db)):
             "month" : e.month,
             "day" : e.day,
             "source_url" : e.source_url,
+        }
+        for e in events
+    ]
+
+@router.get("events/world/year/list")
+def list_world_year_events(year: int, db: Session = Depends(get_db)):
+    events = (
+        db.query(Event)
+        .filter(Event.year == year, Event.region == Region.world)
+        .order_by(Event.month, Event.day)
+        .all()
+    )
+    return[
+        {
+            "title" : e.title,
+            "month" : e.month,
+            "day" : e.day,
+            "source_url" : e.source_url,
+
         }
         for e in events
     ]
